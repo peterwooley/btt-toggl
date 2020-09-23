@@ -56,7 +56,7 @@ async function getCurrentTimeEntry(): Promise<TimeEntry | null> {
     const result: any = await axios(config)
     let entry = result?.data?.data;
 
-    if(entry) {
+    if(entry?.pid) {
       let projectConfig = requestConfig('https://api.track.toggl.com/api/v8/projects/'+entry.pid)
       const projectResult: any = await axios(projectConfig)
       let projectEntry = projectResult?.data?.data;
@@ -119,6 +119,7 @@ async function stopATimeEntry(current: TimeEntry): Promise<void> {
 }
 
 function truncated(str: string) {
+    if(!str) return;
     let dots = "..."
     let prefix = str.substr(0, limit)
     let suffix = str.substr(limit)
@@ -146,7 +147,7 @@ async function generateStatus(entry: TimeEntry | null = null) {
     let icon = inactiveIcon
     if (current) {
         icon = activeIcon
-        statusText = `${getDuration(current)} ${current.project} • ${current.client} ${truncated(current.description)}`
+        statusText = `${getDuration(current)} ${current.project ? `${current.project} • ${current.client}` : ''} ${!current.project ? truncated(current.description) : ''}`
     }
     return {
         text: statusText,
