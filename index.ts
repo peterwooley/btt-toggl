@@ -56,17 +56,19 @@ async function getCurrentTimeEntry(): Promise<TimeEntry | null> {
     const result: any = await axios(config)
     let entry = result?.data?.data;
 
-    let projectConfig = requestConfig('https://api.track.toggl.com/api/v8/projects/'+entry.pid)
-    const projectResult: any = await axios(projectConfig)
-    let projectEntry = projectResult?.data?.data;
+    if(entry) {
+      let projectConfig = requestConfig('https://api.track.toggl.com/api/v8/projects/'+entry.pid)
+      const projectResult: any = await axios(projectConfig)
+      let projectEntry = projectResult?.data?.data;
 
-    entry.project = projectEntry.name;
+      entry.project = projectEntry.name;
 
-    let clientConfig = requestConfig('https://api.track.toggl.com/api/v8/clients/'+projectEntry.cid)
-    const clientResult: any = await axios(clientConfig)
-    let clientEntry = clientResult?.data?.data;
+      let clientConfig = requestConfig('https://api.track.toggl.com/api/v8/clients/'+projectEntry.cid)
+      const clientResult: any = await axios(clientConfig)
+      let clientEntry = clientResult?.data?.data;
 
-    entry.client = clientEntry.name;
+      entry.client = clientEntry.name;
+    }
 
     saveEntry(entry)
     return entry
