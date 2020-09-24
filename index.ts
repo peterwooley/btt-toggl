@@ -147,7 +147,7 @@ async function generateStatus(entry: TimeEntry | null = null) {
         current = await getCurrentTimeEntry()
     }
 
-    let statusText = ''
+    let statusText = ' '
     let icon = inactiveIcon
     if (current) {
         icon = activeIcon
