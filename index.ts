@@ -63,11 +63,15 @@ async function getCurrentTimeEntry(): Promise<TimeEntry | null> {
 
       entry.project = projectEntry.name;
 
-      let clientConfig = requestConfig('https://api.track.toggl.com/api/v8/clients/'+projectEntry.cid)
-      const clientResult: any = await axios(clientConfig)
-      let clientEntry = clientResult?.data?.data;
+      if(projectEntry.cid) {
+        let clientConfig = requestConfig('https://api.track.toggl.com/api/v8/clients/'+projectEntry.cid)
+        const clientResult: any = await axios(clientConfig)
+        let clientEntry = clientResult?.data?.data;
 
-      entry.client = clientEntry.name;
+        entry.client = clientEntry.name;
+      } else {
+        entry.client = "No client";
+      }
     }
 
     saveEntry(entry)
@@ -143,7 +147,7 @@ async function generateStatus(entry: TimeEntry | null = null) {
         current = await getCurrentTimeEntry()
     }
 
-    let statusText = '-'
+    let statusText = ''
     let icon = inactiveIcon
     if (current) {
         icon = activeIcon
